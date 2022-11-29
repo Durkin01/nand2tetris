@@ -1,0 +1,16 @@
+class Main {
+    function void main() {
+        var String i;
+        var Real testIn; 
+        var String testOut;
+
+        let i = Keyboard.readStr("first number..."); 
+
+        let testIn = Real.new(i);
+        
+        let testOut = test.get(); 
+
+        do Output.printString(testOut);
+        return;
+    }
+}

@@ -1,0 +1,19 @@
+
+/** Represents a number with decimals up to the 8th position. */
+class Real {
+    field String real;   
+
+    /** input must be a string in proper format of a real number*/
+    constructor Real new(String newNumber) {
+        let real = newNumber;
+        return this;
+    }
+
+    /** Accessor. */
+    method String get() { return real; }
+
+    /** Adds real numbers. Method only accepts objects of type Real */
+    method int add(Real other) {
+        return 1; // <--temporary
+    }
+}
