@@ -6,10 +6,44 @@
 /** Initializes a new Square Dance game and starts running it. */
 class Main {
     function void main() {
+        var int larger;
+        var int smaller;
+        var int q;
+        var int r;
+
         var SquareGame game;
         let game = SquareGame.new();
         do game.run();
         do game.dispose();
         return;
+    }
+        method int compute(a,b) {
+
+        while ((~(a = 0)) & (~(b = 0))) {
+            if (a = 0) {
+                return b;
+            }
+            if (b = 0) {
+                return a;
+            }
+
+            if (a > b) {
+                let larger = a; 
+                let smaller = b;
+            }     
+            else {
+                let larger = b; 
+                let smaller = a;
+            }
+
+            let q = 0;
+            while (~(larger - smaller) < 0) ) {
+               let larger = larger - smaller;
+               let q = q + 1 
+            }
+            let r = larger;
+            let larger = smaller;
+            let smaller = r;
+        }
     }
 }

@@ -1,0 +1,23 @@
+<tokens>
+<keyword> class </keyword>
+<identifier> { </identifier>
+<symbol> function </symbol>
+<subroutineDec>
+<keyword> void </keyword>
+<INDENTIFIER> main </INDENTIFIER>
+<identifier> ( </identifier>
+<symbol> ) </symbol><parameterList>
+</parameterList>
+<symbol> { </symbol><subroutineBody>
+<symbol> } </symbol<varDec>
+<keyword> var </keyword>
+<indentifier> a </indentifier>
+<identifier> ; </identifier>
+<symbol> ; </symbol>
+</varDec>
+<statements>
+</statements>
+<symbol> } </symbol<subroutineBody>
+<subroutineDec>
+<symbol> ; </symbol>
+</tokens>

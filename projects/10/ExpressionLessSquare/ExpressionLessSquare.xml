@@ -1,0 +1,80 @@
+<class>
+<keyword> class </keyword>
+<identifier> { </identifier>
+<symbol> static </symbol>
+<subroutineDec>
+<keyword> boolean </keyword>
+<INDENTIFIER> test </INDENTIFIER>
+<identifier> ; </identifier>
+<symbol> function </symbol><parameterList>
+<keyword> void </keyword>
+<identifier> main </identifier>
+</parameterList>
+<symbol> ( </symbol><subroutineBody>
+<symbol> } </symbol<varDec>
+<keyword> var </keyword>
+<keyword> var </keyword>
+<identifier> SquareGame </identifier>
+<symbol> ; </symbol>
+</varDec>
+<statements>
+<letStatement>
+<keyword> <bound method JackTokenizer.identifier of <Tokenizer.JackTokenizer object at 0x0000015E2B003AF0>> </keyword>
+<identifier> game </identifier>
+<symbol> = </symbol>
+<expression>
+<term>
+<identifier> game </identifier>
+<symbol> . </symbol>
+<identifier> game </identifier>
+<symbol> run </symbol>
+<expressionList>
+<expression>
+<term>
+<identifier> ; </identifier>
+</term>
+</expression>
+</expressionList>
+<symbol> . </symbol>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+</statements>
+<symbol> } </symbol<subroutineBody>
+<subroutineDec>
+<subroutineDec>
+<keyword> return </keyword>
+<SYMBOL> ; </SYMBOL>
+<identifier> } </identifier>
+<symbol> function </symbol><parameterList>
+<keyword> void </keyword>
+<identifier> more </identifier>
+</parameterList>
+<symbol> ( </symbol><subroutineBody>
+<symbol> } </symbol<varDec>
+<keyword> var </keyword>
+<keyword> var </keyword>
+<identifier> boolean </identifier>
+<symbol> ; </symbol>
+</varDec>
+<statements>
+<ifStatement>
+<keyword> <bound method JackTokenizer.identifier of <Tokenizer.JackTokenizer object at 0x0000015E2B003AF0>> </keyword>
+<symbol> ( </symbol>
+<expression>
+<term>
+<identifier> ) </identifier>
+</term>
+</expression>
+<symbol> ) </symbol>
+<symbol> { </symbol>
+<statements>
+</statements>
+<symbol> } </symbol>
+</ifStatement>
+</statements>
+<symbol> } </symbol<subroutineBody>
+<subroutineDec>
+<symbol> } </symbol>
+</class>
