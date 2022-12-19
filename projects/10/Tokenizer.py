@@ -6,83 +6,79 @@
 class JackTokenizer():
 
     keywordList = ['class','constructor','function','method','field','static','var','int','char','boolean','void','true','false','null','this','let','do','if','else','while','return']
-    symbolList = ['{','}','(',')','[',']','.',',',';','+','-','*','/','&','|','<','>','=','~',"&lt;,","&gt;","&quot","&amp;"]
+    symbolList = ['{','}','(',')','[',']','.',',',';','+','-','*','/','&','|','<','>','=','~',"&lt;,","&gt;","&quot;","&amp;"]
 
     # Constructor
-    def __init__(self,file_list):
+    def __init__(self,file):
         
         self.tokenList = []
         self.currentToken = None
         self.tokenIdx = 0
         self.next = 0
 
-        if not isinstance(file_list,list): 
-            file_list = [file_list]
+        with open(file, 'r') as f:
+            lines = f.readlines() 
 
-        for file in file_list: 
-            with open(file, 'r') as f:
-                lines = f.readlines() 
-
-            for line in lines:
-                idx = None
-                # print(line + 'hello')
+        for line in lines:
+            idx = None
+            # print(line + 'hello')
+            try:
                 try:
-                    try:
-                        idx = line.index('//')
-                    except:
-                        idx = line.index('/*')
+                    idx = line.index('//')
                 except:
-                    pass
-                if isinstance(idx,int):
-                    line = line[:idx]
-    
-                line = line.strip()
+                    idx = line.index('/*')
+            except:
+                pass
+            if isinstance(idx,int):
+                line = line[:idx]
 
-                quotation = False
-                waitingToken = ''
-                for c in line:
+            line = line.strip()
 
-                    # quotation commands
-                    if c == '"' and not quotation:
-                        quotation = True
+            quotation = False
+            waitingToken = ''
+            for c in line:
+
+                # quotation commands
+                if c == '"' and not quotation:
+                    quotation = True
+                    waitingToken += c
+                elif c == '"' and quotation:
+                    self.tokenList.append(waitingToken + c)
+                    waitingToken = '' 
+                    quotation = False
+                elif quotation:
+                    waitingToken += c
+
+                # space commands
+                elif c == ' ' and quotation:
+                    waitingToken += c
+                elif c == ' ' and not quotation:
+                    if waitingToken != '':
+                        self.tokenList.append(waitingToken)
+                    waitingToken = ''
+
+                # handles special symbols
+                elif c in JackTokenizer.keywordList or c in JackTokenizer.symbolList:
+                    if waitingToken != '' and waitingToken != ' ': 
+                        self.tokenList.append(waitingToken)
+
+                    if c == '"':
+                        c = '&quot;'
+                    elif c == '>':
+                        c = '&gt;'
+                    elif c == '<':
+                        c = '&lt;'
+                    elif c== '&':
+                        c = '&amp;'
+
+                    self.tokenList.append(c)
+                    waitingToken = ''
+                else:
+                    if c != '' or c != ' ':
                         waitingToken += c
-                    elif c == '"' and quotation:
-                        self.tokenList.append(waitingToken + c)
-                        waitingToken = '' 
-                        quotation = False
-                    elif quotation:
-                        waitingToken += c
 
-                    # space commands
-                    elif c == ' ' and quotation:
-                        waitingToken += c
-                    elif c == ' ' and not quotation:
-                        if waitingToken != '':
-                            self.tokenList.append(waitingToken)
-                        waitingToken = ''
-
-                    # handles special symbols
-                    elif c in JackTokenizer.keywordList or c in JackTokenizer.symbolList:
-                        if waitingToken != '' and waitingToken != ' ': 
-                            self.tokenList.append(waitingToken)
-
-                        if c == '"':
-                            c = '&quot;'
-                        elif c == '>':
-                            c = '&gt;'
-                        elif c == '<':
-                            c = '&lt;'
-                        elif c== '&':
-                            c = '&amp;'
-
-                        self.tokenList.append(c)
-                        waitingToken = ''
-                    else:
-                        if c != '' or c != ' ':
-                            waitingToken += c
-
-                if waitingToken != '':
-                    self.tokenList.append(waitingToken)
+            if waitingToken != '':
+                self.tokenList.append(waitingToken)
 
     def hasMoreTokens(self):
         try:

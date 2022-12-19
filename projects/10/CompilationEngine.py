@@ -39,7 +39,7 @@ class CompilationEngine():
         f = self.f
 
         # <classVarDec>
-        f.write('<classVarDec\n')
+        f.write('<classVarDec>\n')
 
         # keyword
         f.write(f'<keyword> {self.tk.keyWord().lower()} </keyword>\n')                           # '<keyword> {static,field} </keyword>\n' 
@@ -59,12 +59,12 @@ class CompilationEngine():
         while self.tk.symbol() == ',':
             f.write(f'<symbol> , </symbol>\n')
             self.tk.advance()
-            f.write(f'<identifier> {self.tk.indentifier()} </identifier>\n')
+            f.write(f'<identifier> {self.tk.identifier()} </identifier>\n')
             self.tk.advance()
         f.write('<symbol> ; </symbol>\n')
 
         # </classVarDec>
-        f.write('</classVarDec\n')
+        f.write('</classVarDec>\n')
 
     # keyword,[keyword,identifier],identifier,symbol,parameterlist,symbol,subroutineBody
     def compileSubroutineDec(self):
@@ -76,7 +76,7 @@ class CompilationEngine():
 
         # keyword/identifier
         self.tk.advance()
-        brackets = self.tk.tokenType()
+        brackets = self.tk.tokenType().lower()
         f.write(f'<{brackets}> {self.tk.identifier()} </{brackets}>\n')
 
         # identifier
@@ -85,18 +85,18 @@ class CompilationEngine():
 
         # symbol
         self.tk.advance()
-        f.write(f'<symbol> {self.tk.symbol()} </symbol>')
+        f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
         
         # parameter List
         self.compileParameterList()
 
         # symbol
-        f.write(f'<symbol> {self.tk.symbol()} </symbol>')
+        f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
 
         # subroutineBody
         self.compileSubroutineBody()
 
-        f.write('<subroutineDec>\n')
+        f.write('</subroutineDec>\n')
 
     def compileParameterList(self):
         f = self.f
@@ -139,7 +139,7 @@ class CompilationEngine():
 
         # '{'
         self.tk.advance()
-        f.write('<symbol> } </symbol')
+        f.write('<symbol> { </symbol>\n')
 
         # varDec*       
         self.compileVarDec()
@@ -148,9 +148,9 @@ class CompilationEngine():
         self.compileStatements()
 
         # '}' 
-        f.write('<symbol> } </symbol')
+        f.write('<symbol> } </symbol>\n')
 
-        f.write('<subroutineBody>\n')
+        f.write('</subroutineBody>\n')
         
     # 'var',identifier/keyword,identifier,(',',identifier)*,';'
     def compileVarDec(self):
@@ -192,11 +192,9 @@ class CompilationEngine():
         f = self.f
         f.write('<statements>\n')
 
-        self.tk.advance()
         while self.tk.symbol() in ['let','if','while','do','return']:
             symbol = self.tk.symbol()
-
-            # assumes advance() is used before each function exits
+            
             if symbol == 'let':
                 self.compileLet()
             if symbol == 'if':
@@ -216,7 +214,7 @@ class CompilationEngine():
 
         # 'let'
         f.write('<letStatement>\n')
-        f.write(f'<keyword> {self.tk.identifier} </keyword>\n')
+        f.write(f'<keyword> {self.tk.identifier()} </keyword>\n')
 
         # identifier
         self.tk.advance()
@@ -235,15 +233,13 @@ class CompilationEngine():
         self.tk.advance()
         f.write('<symbol> = </symbol>\n')
 
-        # expression
-        self.tk.advance()
+        # expression        
         self.compileExpression()
 
-        # ';'
+         # ';'
         self.tk.advance()
         f.write('<symbol> ; </symbol>\n')
 
-        self.tk.advance()
         f.write('</letStatement>\n')
 
     def compileIf(self):
@@ -251,13 +247,14 @@ class CompilationEngine():
         f.write('<ifStatement>\n')            
 
         # 'if'
-        f.write(f'<keyword> {self.tk.identifier} </keyword>\n')
+        f.write(f'<keyword> {self.tk.identifier()} </keyword>\n')
 
         # '('
         self.tk.advance()
         f.write('<symbol> ( </symbol>\n')
         
         # expression
+        self.tk.advance()
         self.compileExpression()
 
         # ')'
@@ -334,7 +331,7 @@ class CompilationEngine():
         f.write('<doStatement>\n')
 
         # 'do'
-        f.write(f'<keyword> {self.tk.identifier} </keyword>\n')
+        f.write(f'<keyword> {self.tk.identifier()} </keyword>\n')
 
         # subroutine call
         self.tk.advance()
@@ -369,15 +366,21 @@ class CompilationEngine():
             # ')'
             f.write(f'<symbol> ) </symbol>\n')
 
+        f.write(f'<symbol> ; </symbol>\n')
+
+        self.tk.advance()
         self.tk.advance()
         f.write('</doStatement>\n')
 
     def compileReturn(self):
         f = self.f
         f.write('<returnStatement>\n')
+        f.write('<keyword> return </keyword>\n')
+        self.tk.advance()
+        if self.tk.symbol() != ";":
+            self.compileExpression()
 
-        f.write(f'<keyword> {self.tk.identifier} </keyword>\n')
-
+        f.write(f'<symbol> ; </symbol>\n')
 
         self.tk.advance()
         f.write('</returnStatement>\n')
@@ -385,7 +388,7 @@ class CompilationEngine():
     # advanced() CANNOT be used before entering
     def compileExpression(self):
         f = self.f
-        self.tk.advance()
+
         f.write('<expression>\n')
 
         # term
@@ -393,7 +396,8 @@ class CompilationEngine():
 
         # LOOP if op
         self.tk.advance()
-        if self.tk.symbol() in ['+','-','*','&','|','<','>','=']:
+        if self.tk.symbol() in ['+','-','*','&','|','<','>','=','&lt;','&gt;','&quot;','&amp;']:
+            
             # op
             f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
 
@@ -406,7 +410,6 @@ class CompilationEngine():
     def compileTerm(self):
         f = self.f
         f.write('<term>\n')
-        self.tk.advance()
         p1 = self.tk.symbol()
         p1_type = self.tk.tokenType()
         self.tk.savePeek()
@@ -458,7 +461,6 @@ class CompilationEngine():
             # varName
             f.write(f'<identifier> {p1} </identifier>\n') 
 
-        self.tk.advance()
         f.write('</term>\n')
 
     # assumes advanced() not used BEFORE in; advanced() used BEFORE out
@@ -469,9 +471,10 @@ class CompilationEngine():
         f.write('<expressionList>\n')
 
         # expression
-        self.compileExpression() 
+        if self.tk.symbol() == ',':
+            self.compileExpression() 
+            self.tk.advance()
 
-        self.tk.advance()
         # if ','
         while self.tk.symbol() == ',':
             f.write(f'<symbol> , </symbol>\n')

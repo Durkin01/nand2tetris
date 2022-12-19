@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import sys
 import os
 import Tokenizer
@@ -8,7 +7,7 @@ def main():
 
     path = sys.argv[1]
     directory = False
-    
+
     # If directory
     if os.path.isdir(path):
         directory = True
@@ -33,8 +32,9 @@ def main():
         file_name = path[:-5]
         file_list = [sys.argv[1]]
 
-    tokenizer = Tokenizer.JackTokenizer(file_list)
-    CompilationEngine.CompilationEngine(tokenizer,file_name)
+    for file in file_list:
+        tokenizer = Tokenizer.JackTokenizer(file)
+        CompilationEngine.CompilationEngine(tokenizer, file + "_mine")
 
 
 if __name__ == "__main__":
