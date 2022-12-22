@@ -26,7 +26,10 @@ class JackTokenizer():
                 try:
                     idx = line.index('//')
                 except:
-                    idx = line.index('/*')
+                    try:
+                        idx = line.index('/*')
+                    except:
+                        idx = line.index('*')
             except:
                 pass
             if isinstance(idx,int):
@@ -108,7 +111,7 @@ class JackTokenizer():
         if token in self.symbolList:
             return "SYMBOL"
         else:
-            return "INDENTIFIER" 
+            return "IDENTIFIER" 
 
     def keyWord(self):
         return self.currentToken.upper()
@@ -128,11 +131,14 @@ class JackTokenizer():
     def print(self):
         print(self.tokenList)
     
-    def savePeek(self):
-        self.next = self.tokenList[self.tokenIdx + 1]
+    def savePeek(self,n=1):
+        self.next = self.tokenList[self.tokenIdx + n]
         
     def returnPeek(self):
         return self.next
+
+    def peekNext(self,n=1):
+        return self.tokenList(self.tokenIdx + n)
 
     def typePeek(self):
         return self.tokenType(self.next)

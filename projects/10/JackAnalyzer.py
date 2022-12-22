@@ -34,7 +34,10 @@ def main():
 
     for file in file_list:
         tokenizer = Tokenizer.JackTokenizer(file)
-        CompilationEngine.CompilationEngine(tokenizer, file + "_mine")
+
+        CompilationEngine.CompilationEngine(tokenizer, file[:-5]+'mine')
+#        print(file[:-5])
+
 
 
 if __name__ == "__main__":

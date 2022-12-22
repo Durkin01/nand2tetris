@@ -31,7 +31,6 @@ class CompilationEngine():
                 self.compileClassVarDec()
             else:
                 self.compileSubroutineDec()
-            self.tk.advance() 
         f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')               # <symbol> } </symbol>
 
     # keyword,[keyword,identifier],identifier,(symbol,identifier),symbol
@@ -64,6 +63,7 @@ class CompilationEngine():
         f.write('<symbol> ; </symbol>\n')
 
         # </classVarDec>
+        self.tk.advance()
         f.write('</classVarDec>\n')
 
     # keyword,[keyword,identifier],identifier,symbol,parameterlist,symbol,subroutineBody
@@ -88,12 +88,14 @@ class CompilationEngine():
         f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
         
         # parameter List
+        self.tk.advance()
         self.compileParameterList()
 
         # symbol
         f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
 
         # subroutineBody
+        self.tk.advance()
         self.compileSubroutineBody()
 
         f.write('</subroutineDec>\n')
@@ -101,8 +103,9 @@ class CompilationEngine():
     def compileParameterList(self):
         f = self.f
         f.write('<parameterList>\n')
+        #if self.tk.tokenType() in ['KEYWORD','IDENTIFIER']:
+        #    f.write('\n')
 
-        self.tk.advance()
         while self.tk.tokenType() in ['KEYWORD','IDENTIFIER']:
 
             # type
@@ -115,7 +118,7 @@ class CompilationEngine():
 
             self.tk.advance()
             # LOOP BELOW    
-            while self.tk.symbol == ',':
+            while self.tk.symbol() == ',':
                 # symbol ','
                 f.write(f'<symbol> , </symbol>\n')
 
@@ -130,6 +133,7 @@ class CompilationEngine():
 
                 self.tk.advance()
 
+            
         f.write('</parameterList>\n')
 
     # '{', varDec*, statements, '}'
@@ -138,17 +142,19 @@ class CompilationEngine():
         f.write('<subroutineBody>\n')
 
         # '{'
-        self.tk.advance()
         f.write('<symbol> { </symbol>\n')
 
         # varDec*       
-        self.compileVarDec()
+        self.tk.advance()
+        while self.tk.symbol() == 'var':
+            self.compileVarDec()
 
         # statements
         self.compileStatements()
 
         # '}' 
         f.write('<symbol> } </symbol>\n')
+        self.tk.advance()
 
         f.write('</subroutineBody>\n')
         
@@ -158,7 +164,6 @@ class CompilationEngine():
         f.write('<varDec>\n')
 
         # 'var'
-        self.tk.advance()
         f.write(f'<keyword> var </keyword>\n')
     
         # identifier/keyword
@@ -183,8 +188,8 @@ class CompilationEngine():
             self.tk.advance()
 
         # ';'
-        self.tk.advance()
         f.write('<symbol> ; </symbol>\n')
+        self.tk.advance()
 
         f.write('</varDec>\n')
 
@@ -226,20 +231,19 @@ class CompilationEngine():
             f.write(f'<symbol> [ </symbol>\n')
             self.tk.advance()
             self.compileExpression()     
-            # advance() here???
-            f.write(f'<symbol> ] </symbol>\n')
+            f.write(f'<symbol> ] </symbol>\n') 
+            self.tk.advance()
 
         # '='
-        self.tk.advance()
         f.write('<symbol> = </symbol>\n')
 
         # expression        
-        self.compileExpression()
-
-         # ';'
         self.tk.advance()
+        self.compileExpression()
+         # ';'
         f.write('<symbol> ; </symbol>\n')
 
+        self.tk.advance()
         f.write('</letStatement>\n')
 
     def compileIf(self):
@@ -258,7 +262,6 @@ class CompilationEngine():
         self.compileExpression()
 
         # ')'
-        self.tk.advance()
         f.write('<symbol> ) </symbol>\n')
 
         # '{'
@@ -266,6 +269,7 @@ class CompilationEngine():
         f.write('<symbol> { </symbol>\n')
         
         # statements 
+        self.tk.advance()
         self.compileStatements()
 
         # '}'
@@ -277,7 +281,6 @@ class CompilationEngine():
         if symbol == 'else':
 
             # 'else'
-            self.tk.advance()
             f.write('<keyword> else </keyword>\n')
 
             # '{'
@@ -285,13 +288,13 @@ class CompilationEngine():
             f.write('<symbol> { </symbol>\n')
 
             # statements
+            self.tk.advance()
             self.compileStatements()
 
             # '}'
             f.write('<symbol> } </symbol>\n')
+            self.tk.advance()
 
-
-        self.tk.advance()
         f.write('</ifStatement>\n')
 
     def compileWhile(self):
@@ -299,7 +302,7 @@ class CompilationEngine():
         f.write('<whileStatement>\n')
 
         # 'while'
-        f.write(f'<keyword> {self.tk.identifier} </keyword>\n')
+        f.write(f'<keyword> {self.tk.identifier()} </keyword>\n')
 
         # '('
         self.tk.advance()
@@ -310,7 +313,6 @@ class CompilationEngine():
         self.compileExpression()
 
         # ')'
-        self.tk.advance()
         f.write('<symbol> ) </symbol>\n')
 
         # '{'
@@ -318,11 +320,12 @@ class CompilationEngine():
         f.write('<symbol> { </symbol>\n')
 
         # statements
-        self.compileStatements 
+        self.tk.advance()
+        self.compileStatements() 
 
         # '}'
         f.write('<symbol> } </symbol>\n')
-
+        
         self.tk.advance()
         f.write('</whileStatement>\n')
 
@@ -342,9 +345,11 @@ class CompilationEngine():
             f.write(f'<identifier> {p1} </identifier>\n') 
             f.write(f'<symbol> {p2} </symbol>\n')
             # expressionList
+            self.tk.advance()
             self.compileExpressionList()
 
             f.write(f'<symbol> ) </symbol>\n')
+            self.tk.advance()
         else:
             # identifier
             f.write(f'<identifier> {p1} </identifier>\n')
@@ -361,14 +366,15 @@ class CompilationEngine():
             f.write(f'<symbol> ( </symbol>\n')
 
             # expressionList
+            self.tk.advance()
             self.compileExpressionList()
 
             # ')'
             f.write(f'<symbol> ) </symbol>\n')
+            self.tk.advance()
 
         f.write(f'<symbol> ; </symbol>\n')
 
-        self.tk.advance()
         self.tk.advance()
         f.write('</doStatement>\n')
 
@@ -385,7 +391,7 @@ class CompilationEngine():
         self.tk.advance()
         f.write('</returnStatement>\n')
 
-    # advanced() CANNOT be used before entering
+    # advanced() IN; advance() OUT 
     def compileExpression(self):
         f = self.f
 
@@ -395,20 +401,21 @@ class CompilationEngine():
         self.compileTerm()
 
         # LOOP if op
-        self.tk.advance()
-        if self.tk.symbol() in ['+','-','*','&','|','<','>','=','&lt;','&gt;','&quot;','&amp;']:
+        while self.tk.symbol() in ['/','+','-','*','&','|','<','>','=','&lt;','&gt;','&quot;','&amp;']:
             
             # op
             f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
+            self.tk.advance()
 
             # term
             self.compileTerm()
-
+        
         f.write('</expression>\n')
 
-    # advance() NOT in; advance() OUT
+    # advance() IN; advance() OUT
     def compileTerm(self):
         f = self.f
+
         f.write('<term>\n')
         p1 = self.tk.symbol()
         p1_type = self.tk.tokenType()
@@ -416,70 +423,92 @@ class CompilationEngine():
         p2 = self.tk.returnPeek()
         p2_type = self.tk.typePeek()
 
-        # integerConstant, stringConstant, keywordConstant, varName
+        
+        # integerConstant, stringConstant, keywordConstant
         if p1_type in ["STRING_CONST","INT_CONST",'KEYWORD']:
             if p1_type == 'STRING_CONST':
-                f.write(f'<stringConstant> {p1} </stringConstant>\n')
+                f.write(f'<stringConstant> {p1[1:-1]} </stringConstant>\n')
             elif p1_type == 'INT_CONST':
                 f.write(f'<integerConstant> {p1} </integerConstant>\n')
             else:
                 f.write(f'<{p1_type.lower()}> {p1} </{p1_type.lower()}>\n')
+            self.tk.advance()
+
+        # varName
+        elif p1_type == 'IDENTIFIER' and p2 in [';','{']:
+            f.write(f'<{p1_type.lower()}> {p1} </{p1_type.lower()}>\n')
+            self.tk.advance()
             
         # '('
         elif p1 == '(':
             f.write(f'<symbol> {p1} </symbol>\n')
+            self.tk.advance()
             self.compileExpression()
+            f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
+            self.tk.advance()
+
         # unaryOp term
         elif p1 in ['-','~']:
             f.write(f'<symbol> {p1} </symbol>\n')
+            self.tk.advance()
             self.compileTerm()
         
         # identifiers
         elif p2 == '[':
-            f.write(f'<identifier> {p1} </integerConstant>\n')
+            f.write(f'<identifier> {p1} </identifier>\n')
             self.tk.advance()
             f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
+            self.tk.advance()
             self.compileExpression()
+            f.write(f'<symbol> {self.tk.symbol()} </symbol>\n') 
             self.tk.advance()
-            f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
         elif p2 == '(':
             f.write(f'<identifier> {p1} </identifier>\n') 
             self.tk.advance()
             f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
+            self.tk.advance()
             self.compileExpressionList()
             f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
+            self.tk.advance()
         elif p2 == '.':
             f.write(f'<identifier> {p1} </identifier>\n') 
             self.tk.advance()
             f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
-            f.write(f'<identifier> {p1} </identifier>\n') 
+            self.tk.advance()
+            f.write(f'<identifier> {self.tk.symbol()} </identifier>\n') 
             self.tk.advance()
             f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
+            self.tk.advance()
             self.compileExpressionList()
             f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
+            self.tk.advance()
+        elif p2 == ';':
+            f.write(f'<identifier> {self.tk.symbol()} </identifier>\n') 
+            self.tk.advance()
         else:
             # varName
             f.write(f'<identifier> {p1} </identifier>\n') 
+            self.tk.advance()
+            # self.tk.savePeek(2)
+            # tmp = self.tk.returnPeek()
+            # if tmp == ';':
+            #     self.tk.advance() 
 
         f.write('</term>\n')
 
-    # assumes advanced() not used BEFORE in; advanced() used BEFORE out
+    # assumes advanced() IN; advanced() used before OUT 
     def compileExpressionList(self):
         f = self.f
-        self.tk.advance()
 
         f.write('<expressionList>\n')
-
-        # expression
-        if self.tk.symbol() == ',':
-            self.compileExpression() 
-            self.tk.advance()
-
-        # if ','
-        while self.tk.symbol() == ',':
-            f.write(f'<symbol> , </symbol>\n')
-            self.compileExpression() 
-            self.tk.advance()
+        #if self.tk.symbol() not in [')',';']:
+        #    f.write('\n')
+        while self.tk.symbol() not in [')',';']: 
+            self.compileExpression()
+            if self.tk.symbol() == ',':
+                f.write(f'<symbol> {self.tk.symbol()} </symbol>\n')
+                self.tk.advance()
+        
 
         f.write('</expressionList>\n')
 
