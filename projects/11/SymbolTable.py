@@ -7,6 +7,9 @@ class SymbolTable():
     subScope = {} 
     countDict = {'STATIC':-1,'FIELD':-1,'VAR':-1,'ARG':-1}    
 
+    def __init__(self):
+        return self 
+
     def startSubroutine(self):
         self.subScope = {}
         self.countDict['ARG'] = 0
