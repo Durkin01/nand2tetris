@@ -3,12 +3,11 @@
 # Jack Symbol Table
 class SymbolTable():
 
-    classScope = {}
-    subScope = {} 
-    countDict = {'STATIC':-1,'FIELD':-1,'VAR':-1,'ARG':-1}    
 
     def __init__(self):
-        return self 
+        self.classScope = {}
+        self.subScope = {} 
+        self.countDict = {'STATIC':-1,'FIELD':-1,'VAR':-1,'ARG':-1}    
 
     def startSubroutine(self):
         self.subScope = {}

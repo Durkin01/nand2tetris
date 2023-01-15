@@ -6,7 +6,7 @@
 class JackTokenizer():
 
     keywordList = ['class','constructor','function','method','field','static','var','int','char','boolean','void','true','false','null','this','let','do','if','else','while','return']
-    symbolList = ['{','}','(',')','[',']','.',',',';','+','-','*','/','&','|','<','>','=','~',"&lt;,","&gt;","&quot;","&amp;"]
+    symbolList = ['{','}','(',')','[',']','.',',',';','+','-','*','/','&','|','<','>','=','~',"&lt;","&gt;","&quot;","&amp;"]
 
     # Constructor
     def __init__(self,file):
