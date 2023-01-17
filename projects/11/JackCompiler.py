@@ -2,6 +2,7 @@ import sys
 import os
 import Tokenizer
 import CompilationEngine
+import SymbolTable
 
 def main():
 
@@ -33,9 +34,13 @@ def main():
         file_list = [sys.argv[1]]
 
     for file in file_list:
+
+        # create NEW SymbolTable
+        symTable = SymbolTable.SymbolTable()
+
         tokenizer = Tokenizer.JackTokenizer(file)
 
-        CompilationEngine.CompilationEngine(tokenizer, file[:-5]+'mine')
+        CompilationEngine.CompilationEngine(tokenizer, file[:-5]+'.mine',symTable)
 #        print(file[:-5])
 
 

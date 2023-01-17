@@ -28,6 +28,9 @@ class JackTokenizer():
                         idx = line.index('/*')
                     except:
                         idx = line.index('*')
+                        print(idx)
+                        if not idx < 3:
+                            idx = None
             except:
                 pass
             if isinstance(idx,int):
